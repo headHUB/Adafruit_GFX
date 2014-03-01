@@ -482,7 +482,7 @@ void Adafruit_GFX::setTextWrap(boolean w) {
   wrap = w;
 }
 
-uint8_t Adafruit_GFX::getRotation(void) const  {
+uint8_t Adafruit_GFX::getRotation(void)  {
   return rotation;
 }
 
