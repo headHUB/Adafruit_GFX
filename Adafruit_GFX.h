@@ -10,6 +10,10 @@
 
 #define swap(a, b) { int16_t t = a; a = b; b = t; }
 
+//#36D900,#40FF00,#5CFF26,#C9FF26,#FFFF26,#FFC926,#FFA64C,#FF794C,#FF4C4C,#FF0000
+
+
+
 class Adafruit_GFX : public Print {
 
  public:
@@ -33,23 +37,16 @@ class Adafruit_GFX : public Print {
   // These exist only with Adafruit_GFX (no subclass overrides)
   void
     drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color),
-    drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername,
-      uint16_t color),
+    drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername,uint16_t color),
     fillCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color),
-    fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername,
-      int16_t delta, uint16_t color),
-    drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
-      int16_t x2, int16_t y2, uint16_t color),
-    fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
-      int16_t x2, int16_t y2, uint16_t color),
-    drawRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h,
-      int16_t radius, uint16_t color),
-    fillRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h,
-      int16_t radius, uint16_t color),
-    drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap,
-      int16_t w, int16_t h, uint16_t color),
-    drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color,
-      uint16_t bg, uint8_t size),
+    fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername,int16_t delta, uint16_t color),
+    drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint16_t color),
+    fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint16_t color),
+    drawRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h,int16_t radius, uint16_t color),
+    fillRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h,int16_t radius, uint16_t color),
+    drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap,int16_t w, int16_t h, uint16_t color),
+	drawBitmap(int16_t x, int16_t y,const uint8_t *bitmap, int16_t w, int16_t h,uint16_t color, uint16_t bg),
+    drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color,uint16_t bg, uint8_t size),
     setCursor(int16_t x, int16_t y),
     setTextColor(uint16_t c),
     setTextColor(uint16_t c, uint16_t bg),
@@ -62,12 +59,11 @@ class Adafruit_GFX : public Print {
 #else
   virtual void   write(uint8_t);
 #endif
+	int16_t height(void) const;
+	int16_t width(void) const;
 
-  int16_t
-    height(void),
-    width(void);
 
-  uint8_t getRotation(void);
+  uint8_t getRotation(void) const;
 
  protected:
   const int16_t
@@ -82,6 +78,8 @@ class Adafruit_GFX : public Print {
     rotation;
   boolean
     wrap; // If set, 'wrap' text at right edge of display
+	void plot8points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, uint16_t color);
+	void plot4points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, uint16_t color);
 };
 
 #endif // _ADAFRUIT_GFX_H

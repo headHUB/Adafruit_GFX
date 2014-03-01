@@ -51,9 +51,9 @@ Adafruit_GFX::Adafruit_GFX(int16_t w, int16_t h):
   wrap      = true;
 }
 
-// Draw a circle outline
-void Adafruit_GFX::drawCircle(int16_t x0, int16_t y0, int16_t r,
-    uint16_t color) {
+// Draw a circle outline (adafruit original)
+/*
+void Adafruit_GFX::drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color) {
   int16_t f = 1 - r;
   int16_t ddF_x = 1;
   int16_t ddF_y = -2 * r;
@@ -85,6 +85,38 @@ void Adafruit_GFX::drawCircle(int16_t x0, int16_t y0, int16_t r,
     drawPixel(x0 - y, y0 - x, color);
   }
 }
+*/
+//faster alternative
+void Adafruit_GFX::drawCircle(int16_t cx, int16_t cy, int16_t radius, uint16_t color){
+	int error = -radius;
+	int16_t x = radius;
+	int16_t y = 0;
+	while (x >= y){
+		plot8points(cx, cy, x, y, color);
+		error += y;
+		++y;
+		error += y;
+		if (error >= 0){
+			--x;
+			error -= x;
+			error -= x;
+		}
+	}
+}
+
+
+void Adafruit_GFX::plot8points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, uint16_t color){
+	plot4points(cx, cy, x, y, color);
+	if (x != y) plot4points(cx, cy, y, x, color);
+}
+ 
+void Adafruit_GFX::plot4points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, uint16_t color){
+	drawPixel(cx + x, cy + y, color);
+	if (x != 0) drawPixel(cx - x, cy + y, color);
+	if (y != 0) drawPixel(cx + x, cy - y, color);
+	if (x != 0 && y != 0) drawPixel(cx - x, cy - y, color);
+}
+
 
 void Adafruit_GFX::drawCircleHelper( int16_t x0, int16_t y0,
                int16_t r, uint8_t cornername, uint16_t color) {
@@ -160,9 +192,7 @@ void Adafruit_GFX::fillCircleHelper(int16_t x0, int16_t y0, int16_t r,
 }
 
 // Bresenham's algorithm - thx wikpedia
-void Adafruit_GFX::drawLine(int16_t x0, int16_t y0,
-			    int16_t x1, int16_t y1,
-			    uint16_t color) {
+void Adafruit_GFX::drawLine(int16_t x0, int16_t y0,int16_t x1, int16_t y1,uint16_t color) {
   int16_t steep = abs(y1 - y0) > abs(x1 - x0);
   if (steep) {
     swap(x0, y0);
@@ -348,16 +378,23 @@ void Adafruit_GFX::fillTriangle ( int16_t x0, int16_t y0,
   }
 }
 
-void Adafruit_GFX::drawBitmap(int16_t x, int16_t y,
-			      const uint8_t *bitmap, int16_t w, int16_t h,
-			      uint16_t color) {
-
+void Adafruit_GFX::drawBitmap(int16_t x, int16_t y,const uint8_t *bitmap, int16_t w, int16_t h,uint16_t color) {
   int16_t i, j, byteWidth = (w + 7) / 8;
+  for(j=0; j<h; j++) {
+    for(i=0; i<w; i++ ) {
+      if(pgm_read_byte(bitmap + j * byteWidth + i / 8) & (128 >> (i & 7))) drawPixel(x+i, y+j, color);
+    }
+  }
+}
 
+void Adafruit_GFX::drawBitmap(int16_t x, int16_t y,const uint8_t *bitmap, int16_t w, int16_t h,uint16_t color, uint16_t bg) {
+  int16_t i, j, byteWidth = (w + 7) / 8;
   for(j=0; j<h; j++) {
     for(i=0; i<w; i++ ) {
       if(pgm_read_byte(bitmap + j * byteWidth + i / 8) & (128 >> (i & 7))) {
-	drawPixel(x+i, y+j, color);
+        drawPixel(x+i, y+j, color);
+      } else {
+       drawPixel(x+i, y+j, bg);
       }
     }
   }
@@ -445,7 +482,7 @@ void Adafruit_GFX::setTextWrap(boolean w) {
   wrap = w;
 }
 
-uint8_t Adafruit_GFX::getRotation(void) {
+uint8_t Adafruit_GFX::getRotation(void) const  {
   return rotation;
 }
 
@@ -466,11 +503,11 @@ void Adafruit_GFX::setRotation(uint8_t x) {
 }
 
 // Return the size of the display (per current rotation)
-int16_t Adafruit_GFX::width(void) {
+int16_t Adafruit_GFX::width(void) const {
   return _width;
 }
  
-int16_t Adafruit_GFX::height(void) {
+int16_t Adafruit_GFX::height(void) const {
   return _height;
 }
 
