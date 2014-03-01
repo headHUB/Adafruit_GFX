@@ -86,7 +86,7 @@ void Adafruit_GFX::drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color)
   }
 }
 */
-//faster alternative
+//faster (to me) alternative
 void Adafruit_GFX::drawCircle(int16_t cx, int16_t cy, int16_t radius, uint16_t color){
 	int error = -radius;
 	int16_t x = radius;

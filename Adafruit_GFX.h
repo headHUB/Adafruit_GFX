@@ -10,7 +10,6 @@
 
 #define swap(a, b) { int16_t t = a; a = b; b = t; }
 
-//#36D900,#40FF00,#5CFF26,#C9FF26,#FFFF26,#FFC926,#FFA64C,#FF794C,#FF4C4C,#FF0000
 
 
 
