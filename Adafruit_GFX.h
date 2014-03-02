@@ -12,7 +12,6 @@
 
 
 
-
 class Adafruit_GFX : public Print {
 
  public:
@@ -36,6 +35,7 @@ class Adafruit_GFX : public Print {
   // These exist only with Adafruit_GFX (no subclass overrides)
   void
     drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color),
+	drawArc(int16_t x, int16_t y, int16_t r, int16_t rs, int16_t re, uint16_t color),
     drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername,uint16_t color),
     fillCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color),
     fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername,int16_t delta, uint16_t color),
@@ -61,24 +61,20 @@ class Adafruit_GFX : public Print {
 	int16_t height(void) const;
 	int16_t width(void) const;
 
-
-  uint8_t getRotation(void);
+	
+	uint8_t getRotation(void);
 
  protected:
-  const int16_t
-    WIDTH, HEIGHT;   // This is the 'raw' display w/h - never changes
-  int16_t
-    _width, _height, // Display w/h as modified by current rotation
-    cursor_x, cursor_y;
-  uint16_t
-    textcolor, textbgcolor;
-  uint8_t
-    textsize,
-    rotation;
-  boolean
-    wrap; // If set, 'wrap' text at right edge of display
+	const int16_t WIDTH, HEIGHT;   // This is the 'raw' display w/h - never changes
+	int16_t _width, _height; // Display w/h as modified by current rotation
+	int16_t cursor_x, cursor_y;
+	uint16_t textcolor, textbgcolor;
+	uint8_t textsize, rotation;
+	boolean wrap; // If set, 'wrap' text at right edge of display
 	void plot8points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, uint16_t color);
 	void plot4points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, uint16_t color);
+	int i_sin(int x);
+	int i_cos(int x);
 };
 
 #endif // _ADAFRUIT_GFX_H

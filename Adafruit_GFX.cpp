@@ -39,6 +39,20 @@ POSSIBILITY OF SUCH DAMAGE.
  #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
 #endif
 
+  
+static const uint8_t isinTable8[] = { 
+  0, 4, 9, 13, 18, 22, 27, 31, 35, 40, 44, 
+  49, 53, 57, 62, 66, 70, 75, 79, 83, 87, 
+  91, 96, 100, 104, 108, 112, 116, 120, 124, 128, 
+  131, 135, 139, 143, 146, 150, 153, 157, 160, 164, 
+  167, 171, 174, 177, 180, 183, 186, 190, 192, 195, 
+  198, 201, 204, 206, 209, 211, 214, 216, 219, 221, 
+  223, 225, 227, 229, 231, 233, 235, 236, 238, 240, 
+  241, 243, 244, 245, 246, 247, 248, 249, 250, 251, 
+  252, 253, 253, 254, 254, 254, 255, 255, 255, 255, 
+}; 
+
+
 Adafruit_GFX::Adafruit_GFX(int16_t w, int16_t h):
   WIDTH(w), HEIGHT(h)
 {
@@ -51,41 +65,67 @@ Adafruit_GFX::Adafruit_GFX(int16_t w, int16_t h):
   wrap      = true;
 }
 
-// Draw a circle outline (adafruit original)
+int Adafruit_GFX::i_sin(int x){
+  boolean pos = true;  // positive - keeps an eye on the sign.
+  uint8_t idx;
+   //remove next 6 lines for fastestl!
+/*     if (x < 0) {
+       x = -x;
+       pos = !pos;  
+     }  
+    if (x >= 360) x %= 360;   */ 
+  if (x > 180) 
+  {
+    idx = x - 180;
+    pos = !pos;
+  }
+  else idx = x;
+  if (idx > 90) idx = 180 - idx;
+  if (pos) return isinTable8[idx]/2 ;
+  return -(isinTable8[idx]/2);
+}
+
+int Adafruit_GFX::i_cos(int x){
+  return i_sin(x+90);
+}
+
+
 /*
-void Adafruit_GFX::drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color) {
-  int16_t f = 1 - r;
-  int16_t ddF_x = 1;
-  int16_t ddF_y = -2 * r;
-  int16_t x = 0;
-  int16_t y = r;
+  x,y	center of the arc/circle
+  r		radius in pixel
+  rs	start angle (counter clock direction, zero at the left)
+  re			end angle
 
-  drawPixel(x0  , y0+r, color);
-  drawPixel(x0  , y0-r, color);
-  drawPixel(x0+r, y0  , color);
-  drawPixel(x0-r, y0  , color);
-
-  while (x<y) {
-    if (f >= 0) {
-      y--;
-      ddF_y += 2;
-      f += ddF_y;
-    }
-    x++;
-    ddF_x += 2;
-    f += ddF_x;
-  
-    drawPixel(x0 + x, y0 + y, color);
-    drawPixel(x0 - x, y0 + y, color);
-    drawPixel(x0 + x, y0 - y, color);
-    drawPixel(x0 - x, y0 - y, color);
-    drawPixel(x0 + y, y0 + x, color);
-    drawPixel(x0 - y, y0 + x, color);
-    drawPixel(x0 + y, y0 - x, color);
-    drawPixel(x0 - y, y0 - x, color);
+  Notes:
+  1) A circle will be drawn, if rs == re
+  2) angle: 128 = Pi
+*/
+void Adafruit_GFX::drawArc(int16_t x, int16_t y, int16_t r, int16_t rs, int16_t re, uint16_t color)
+{
+  int16_t l,i,w,x1,y1,x2,y2;
+  unsigned short dw;
+  if (re > rs)
+    dw = re-rs;
+  else
+    dw = 256-rs+re;
+    
+  if ( dw == 0 ) dw = 256;
+  //l = (uint8_t)(((((unsigned short)r * dw) >> 7) * (unsigned short)201)>>8);
+  l = (uint8_t)(((((uint16_t)r * dw) >> 7) * (uint16_t)201)>>8);
+  x1 = x+(((int16_t)r*(int16_t)i_cos(rs)) >> 7);
+  y1 = y+(((int16_t)r*(int16_t)i_sin(rs)) >> 7);
+  for (i = 1; i <= l; i++){
+    //w = ((unsigned short)dw*(unsigned short)i) / (unsigned short)l + rs;
+	w = ((uint16_t)dw*(uint16_t)i) / (uint16_t)l + rs;
+    x2 = x+(((int16_t)r*(int16_t)i_cos(w)) >> 7);
+    y2 = y+(((int16_t)r*(int16_t)i_sin(w)) >> 7);
+    drawLine(x1,y1,x2,y2,color);
+    x1 = x2;
+    y1 = y2;
   }
 }
-*/
+
+
 //faster (to me) alternative
 void Adafruit_GFX::drawCircle(int16_t cx, int16_t cy, int16_t radius, uint16_t color){
 	int error = -radius;
@@ -104,12 +144,46 @@ void Adafruit_GFX::drawCircle(int16_t cx, int16_t cy, int16_t radius, uint16_t c
 	}
 }
 
+/*
+void Adafruit_GFX::drawCircle(int16_t x0, int16_t y0, int16_t rad, uint8_t option,uint16_t color) {
+	if (option > 3) return;
+    int16_t f;
+    int16_t ddF_x;
+    int16_t ddF_y;
+    int16_t x;
+    int16_t y;
+
+    f = 1;
+    f -= rad;
+    ddF_x = 1;
+    ddF_y = 0;
+    ddF_y -= rad;
+    ddF_y *= 2;
+    x = 0;
+    y = rad;
+
+    drawCircleSection(x, y, x0, y0, option, color);
+    
+    while ( x < y ){
+      if (f >= 0) {
+        y--;
+        ddF_y += 2;
+        f += ddF_y;
+      }
+      x++;
+      ddF_x += 2;
+      f += ddF_x;
+      drawCircleSection(x, y, x0, y0, option, color);    
+    }
+}
+*/
 
 void Adafruit_GFX::plot8points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, uint16_t color){
 	plot4points(cx, cy, x, y, color);
 	if (x != y) plot4points(cx, cy, y, x, color);
 }
- 
+
+			
 void Adafruit_GFX::plot4points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, uint16_t color){
 	drawPixel(cx + x, cy + y, color);
 	if (x != 0) drawPixel(cx - x, cy + y, color);
@@ -118,8 +192,7 @@ void Adafruit_GFX::plot4points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, uin
 }
 
 
-void Adafruit_GFX::drawCircleHelper( int16_t x0, int16_t y0,
-               int16_t r, uint8_t cornername, uint16_t color) {
+void Adafruit_GFX::drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, uint16_t color) {
   int16_t f     = 1 - r;
   int16_t ddF_x = 1;
   int16_t ddF_y = -2 * r;
