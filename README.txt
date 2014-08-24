@@ -1,5 +1,5 @@
 This is a variation of the Adafruit_GFX library. It has been modified to don't broken compatibility with regular one
-but since the text method it's changed and it's experimental (now it's faster and support multiple fonts) YOU CAN FIND SOME SMALL PROBLEMS WHEN DISPLAY TEXT.
+but since the text method it's changed and it's experimental (now it's faster and support multiple fonts) YOU POSSIBLY CN FIND SOME SMALL PROBLEMS WHEN DISPLAY TEXT.
 The modifications:
  - Faster Circle rendering
  - Faster Font Rendering
@@ -8,15 +8,18 @@ The modifications:
  - Added ellipse rendering (with fast sin e cos tables)
  - Slight faster drawLine for 32bit processors (new)
  
-If uou are using a library that include this one you will probably get an error during compilation about <b>glcdfont</b>!!!
+If uou are using a library that include this one you can get an error during compilation about glcdfont!!!
 Solution it's simple, if you want to use this library you just comment out the include of glcdfont in the library that uses
 this verion of Adafruit_GFX as:
 
 //#include "glcdfont.c" //comment out if you are using the custom version of Adafruit_GFX!!!!!!!!!
 
 That's it.
+Many libraries do not need any mod so probably you will not need this.
 
 
+Below the original text from Adafruit as requested by licence.
+--------------------------------------------------------------------------------------------------------------------------
 This is the core graphics library for all our displays, providing a common set of graphics primitives (points, lines, circles, etc.).  It needs to be paired with a hardware-specific library for each display device we carry (to handle the lower-level functions).
 
 Adafruit invests time and resources providing this open source code, please support Adafruit and open-source hardware by purchasing products from Adafruit!
