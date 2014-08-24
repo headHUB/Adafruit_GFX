@@ -6,10 +6,11 @@ The modifications:
  - Multiple font support
  - Expanded bitmap support
  - Added ellipse rendering (with fast sin e cos tables)
+ - Slight faster drawLine for 32bit processors (new)
  
 If uou are using a library that include this one you will probably get an error during compilation about <b>glcdfont</b>!!!
 Solution it's simple, if you want to use this library you just comment out the include of glcdfont in the library that uses
-this verion of Adafruit_GFX as:<br>
+this verion of Adafruit_GFX as:
 
 //#include "glcdfont.c" //comment out if you are using the custom version of Adafruit_GFX!!!!!!!!!
 
