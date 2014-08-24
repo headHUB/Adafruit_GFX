@@ -129,8 +129,8 @@ int Adafruit_GFX::i_cos(int x){
   2) angle: 128 = Pi
 */
 void Adafruit_GFX::drawArc(int16_t x, int16_t y, int16_t r, int16_t rs, int16_t re, uint16_t color) {
-  int16_t l,i,w;
-  uint16_t x1,y1,x2,y2;
+  int16_t l,i,w;//int16_t
+  int16_t x1,y1,x2,y2;
   unsigned short dw;
   if (re > rs)
     dw = re-rs;
@@ -370,6 +370,87 @@ void Adafruit_GFX::fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t c
 
 // Bresenham's algorithm - thx wikpedia
 void Adafruit_GFX::drawLine(int16_t x0, int16_t y0,int16_t x1, int16_t y1,uint16_t color) {
+
+//based on Paul's stoffregen optimized 16bit transfer for Teensy3
+#if defined(__MK20DX128__) || defined(__MK20DX256__)
+	if (y0 == y1) {
+		if (x1 > x0) {
+			drawFastHLine(x0, y0, x1 - x0 + 1, color);
+		} else if (x1 < x0) {
+			drawFastHLine(x1, y0, x0 - x1 + 1, color);
+		} else {
+			drawPixel(x0, y0, color);
+		}
+		return;
+	} else if (x0 == x1) {
+		if (y1 > y0) {
+			drawFastVLine(x0, y0, y1 - y0 + 1, color);
+		} else {
+			drawFastVLine(x0, y1, y0 - y1 + 1, color);
+		}
+		return;
+	}
+
+	bool steep = abs(y1 - y0) > abs(x1 - x0);
+	if (steep) {
+		swap(x0, y0);
+		swap(x1, y1);
+	}
+	if (x0 > x1) {
+		swap(x0, x1);
+		swap(y0, y1);
+	}
+
+	int16_t dx, dy;
+	dx = x1 - x0;
+	dy = abs(y1 - y0);
+
+	int16_t err = dx / 2;
+	int16_t ystep;
+
+	if (y0 < y1) {
+		ystep = 1;
+	} else {
+		ystep = -1;
+	}
+
+
+	int16_t xbegin = x0;
+	if (steep) {
+		for (; x0<=x1; x0++) {
+			err -= dy;
+			if (err < 0) {
+				int16_t len = x0 - xbegin;
+				if (len) {
+					drawFastVLine(y0, xbegin, len + 1, color);
+				} else {
+					drawPixel(y0, x0, color);
+				}
+				xbegin = x0 + 1;
+				y0 += ystep;
+				err += dx;
+			}
+		}
+		if (x0 > xbegin + 1) drawFastVLine(y0, xbegin, x0 - xbegin, color);
+	} else {
+		for (; x0<=x1; x0++) {
+			err -= dy;
+			if (err < 0) {
+				int16_t len = x0 - xbegin;
+				if (len) {
+					drawFastHLine(xbegin, y0, len + 1, color);
+				} else {
+					drawPixel(x0, y0, color);
+				}
+				xbegin = x0 + 1;
+				y0 += ystep;
+				err += dx;
+			}
+		}
+		if (x0 > xbegin + 1) drawFastHLine(xbegin, y0, x0 - xbegin, color);
+	}
+#else
+//for 8bit processors
   int16_t steep = abs(y1 - y0) > abs(x1 - x0);
   if (steep) { swap(x0, y0); swap(x1, y1); }
   if (x0 > x1) { swap(x0, x1); swap(y0, y1); }
@@ -385,7 +466,6 @@ void Adafruit_GFX::drawLine(int16_t x0, int16_t y0,int16_t x1, int16_t y1,uint16
   } else {
     ystep = -1;
   }
-
   for (; x0<=x1; x0++) {
     if (steep) {
       drawPixel(y0, x0, color);
@@ -398,6 +478,7 @@ void Adafruit_GFX::drawLine(int16_t x0, int16_t y0,int16_t x1, int16_t y1,uint16
       err += dx;
     }
   }
+#endif
 }
 
 // Draw a rectangle
