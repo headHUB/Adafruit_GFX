@@ -1,12 +1,16 @@
 #ifndef _ADAFRUIT_GFX_H
 #define _ADAFRUIT_GFX_H
 
-#if ARDUINO >= 100
- #include "Arduino.h"
- #include "Print.h"
+#if defined(ENERGIA) // LaunchPad, FraunchPad and StellarPad specific
+	#include "Energia.h"
 #else
- #include "WProgram.h"
+	#if ARDUINO >= 100
+		#include "Arduino.h"
+	#else
+		#include "WProgram.h"
+	#endif
 #endif
+
 #include "fonts.h"
 
 #define swap(a, b) { int16_t t = a; a = b; b = t; }
