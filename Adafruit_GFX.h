@@ -1,19 +1,16 @@
 #ifndef _ADAFRUIT_GFX_H
 #define _ADAFRUIT_GFX_H
 
-#if defined(ENERGIA) // LaunchPad, FraunchPad and StellarPad specific
-	#include "Energia.h"
+#if ARDUINO >= 100
+ #include "Arduino.h"
+ #include "Print.h"
 #else
-	#if ARDUINO >= 100
-		#include "Arduino.h"
-	#else
-		#include "WProgram.h"
-	#endif
+ #include "WProgram.h"
 #endif
-
 #include "fonts.h"
 
-#define swap(a, b) { int16_t t = a; a = b; b = t; }
+//#define swap(a, b) { int16_t t = a; a = b; b = t; }
+#define swap(a, b) { typeof(a) t = a; a = b; b = t; }
 
 class Adafruit_GFX : public Print {
 
