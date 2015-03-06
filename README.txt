@@ -8,6 +8,8 @@ The modifications:
  - Added ellipse rendering (with fast sin e cos tables)
  - Slight faster drawLine for 32bit processors (new)
  
+I introduced a small error in drawCircle and his variants that I just fix, if you downloaded this library before, please use the current version!!!
+ 
 If uou are using a library that include this one you can get an error during compilation about glcdfont!!!
 Solution it's simple, if you want to use this library you just comment out the include of glcdfont in the library that uses
 this verion of Adafruit_GFX as:
