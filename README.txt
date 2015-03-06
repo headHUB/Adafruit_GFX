@@ -1,6 +1,5 @@
 This is a variation of the Adafruit_GFX library. It has been modified to don't broken compatibility with regular one
-but since the text method it's changed and it's experimental (now it's faster and support multiple fonts) YOU POSSIBLY CN FIND SOME SMALL PROBLEMS WHEN DISPLAY TEXT.
-The modifications:
+and uses an experimental text method, faster and support multiple fonts!
  - Faster Circle rendering
  - Faster Font Rendering
  - Multiple font support
@@ -15,6 +14,14 @@ Solution it's simple, if you want to use this library you just comment out the i
 this verion of Adafruit_GFX as:
 
 //#include "glcdfont.c" //comment out if you are using the custom version of Adafruit_GFX!!!!!!!!!
+You can also try to use this:
+
+#if !defined(_ADAFRUIT_GFX_VARIANT)
+#include "glcdfont.c"
+#endif
+
+This library has _ADAFRUIT_GFX_VARIANT defined so you can trigger your code as needed.
+
 
 That's it.
 Many libraries do not need any mod so probably you will not need this.
