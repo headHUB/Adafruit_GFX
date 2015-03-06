@@ -285,13 +285,13 @@ void Adafruit_GFX::drawCircle(int16_t x0, int16_t y0, int16_t r,
 
 
 
-void Adafruit_GFX::plot8points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, uint16_t color){
+void Adafruit_GFX::plot8points(uint16_t cx, uint16_t cy, uint16_t x, uint16_t y, uint16_t color){
 	plot4points(cx, cy, x, y, color);
 	if (x != y) plot4points(cx, cy, y, x, color);
 }
 
 
-void Adafruit_GFX::plot4points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, uint16_t color){
+void Adafruit_GFX::plot4points(uint16_t cx, uint16_t cy, uint16_t x, uint16_t y, uint16_t color){
 	drawPixel(cx + x, cy + y, color);
 	if (x != 0) drawPixel(cx - x, cy + y, color);
 	if (y != 0) drawPixel(cx + x, cy - y, color);

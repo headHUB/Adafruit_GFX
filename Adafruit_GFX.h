@@ -78,8 +78,8 @@ class Adafruit_GFX : public Print {
   	int8_t  fontKern;
   	const unsigned char *fontData;
   	boolean wrap; // If set, 'wrap' text at right edge of display
-	void plot8points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, uint16_t color);
-	void plot4points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, uint16_t color);
+	void plot8points(uint16_t cx, uint16_t cy, uint16_t x, uint16_t y, uint16_t color);
+	void plot4points(uint16_t cx, uint16_t cy, uint16_t x, uint16_t y, uint16_t color);
 	int i_sin(int x);
 	int i_cos(int x);
 };
