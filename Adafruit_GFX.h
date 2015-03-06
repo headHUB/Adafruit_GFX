@@ -12,6 +12,10 @@
 //#define swap(a, b) { int16_t t = a; a = b; b = t; }
 #define swap(a, b) { typeof(a) t = a; a = b; b = t; }
 
+#ifndef _ADAFRUIT_GFX_VARIANT
+#define _ADAFRUIT_GFX_VARIANT
+#endif
+
 class Adafruit_GFX : public Print {
 
  public:
