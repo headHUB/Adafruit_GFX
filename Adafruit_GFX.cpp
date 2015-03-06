@@ -541,14 +541,24 @@ void Adafruit_GFX::drawTriangle(int16_t x0, int16_t y0,int16_t x1, int16_t y1,in
   drawLine(x2, y2, x0, y0, color);
 }
 
-// Fill a triangle
-void Adafruit_GFX::fillTriangle ( int16_t x0, int16_t y0,int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint16_t color) {
+
+void Adafruit_GFX::fillTriangle ( int16_t x0, int16_t y0,
+				  int16_t x1, int16_t y1,
+				  int16_t x2, int16_t y2, uint16_t color) {
+
   int16_t a, b, y, last;
 
   // Sort coordinates by Y order (y2 >= y1 >= y0)
-  if (y0 > y1) swap(y0, y1); swap(x0, x1);
-  if (y1 > y2) swap(y2, y1); swap(x2, x1);
-  if (y0 > y1) swap(y0, y1); swap(x0, x1);
+  if (y0 > y1) {
+    swap(y0, y1); swap(x0, x1);
+  }
+  if (y1 > y2) {
+    swap(y2, y1); swap(x2, x1);
+  }
+  if (y0 > y1) {
+    swap(y0, y1); swap(x0, x1);
+  }
+
   if(y0 == y2) { // Handle awkward all-on-same-line case as its own thing
     a = b = x0;
     if(x1 < a)      a = x1;
@@ -587,7 +597,7 @@ void Adafruit_GFX::fillTriangle ( int16_t x0, int16_t y0,int16_t x1, int16_t y1,
     a = x0 + (x1 - x0) * (y - y0) / (y1 - y0);
     b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
     */
-    if (a > b) swap(a,b);
+    if(a > b) swap(a,b);
     drawFastHLine(a, y, b-a+1, color);
   }
 
@@ -595,7 +605,7 @@ void Adafruit_GFX::fillTriangle ( int16_t x0, int16_t y0,int16_t x1, int16_t y1,
   // 0-2 and 1-2.  This loop is skipped if y1=y2.
   sa = dx12 * (y - y1);
   sb = dx02 * (y - y0);
-  for (; y<=y2; y++) {
+  for(; y<=y2; y++) {
     a   = x1 + sa / dy12;
     b   = x0 + sb / dy02;
     sa += dx12;
@@ -604,7 +614,7 @@ void Adafruit_GFX::fillTriangle ( int16_t x0, int16_t y0,int16_t x1, int16_t y1,
     a = x1 + (x2 - x1) * (y - y1) / (y2 - y1);
     b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
     */
-    if (a > b) swap(a,b);
+    if(a > b) swap(a,b);
     drawFastHLine(a, y, b-a+1, color);
   }
 }
