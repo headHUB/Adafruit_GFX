@@ -372,7 +372,7 @@ void Adafruit_GFX::fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t c
 void Adafruit_GFX::drawLine(int16_t x0, int16_t y0,int16_t x1, int16_t y1,uint16_t color) {
 
 //based on Paul's stoffregen optimized 16bit transfer for Teensy3
-#if defined(__MK20DX128__) || defined(__MK20DX256__)
+#if defined(__MK20DX128__) || defined(__MK20DX256__) || defined(__MKL26Z64__)
 	if (y0 == y1) {
 		if (x1 > x0) {
 			drawFastHLine(x0, y0, x1 - x0 + 1, color);

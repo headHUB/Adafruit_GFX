@@ -16,6 +16,7 @@
 #define _ADAFRUIT_GFX_VARIANT
 #endif
 
+
 class Adafruit_GFX : public Print {
 
  public:
