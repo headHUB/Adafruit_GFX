@@ -1,3 +1,14 @@
+/*
+	Adafruit_GFX_Library
+	Original:https://github.com/adafruit/Adafruit-GFX-Library
+	This version:https://github.com/sumotoy/Adafruit-GFX-Library
+	Like with original GFX library but has some bug fix
+	plus several useful stuff like user fonts, faster geometric routines,
+	Teensy 3 specific optimized drawing routines.
+	Even with optimized routines it's still 100% compatible with original librarary
+	for all processors.
+*/
+
 #ifndef _ADAFRUIT_GFX_H
 #define _ADAFRUIT_GFX_H
 
@@ -10,7 +21,8 @@
 #include "fonts.h"
 
 //#define swap(a, b) { int16_t t = a; a = b; b = t; }
-#define swap(a, b) { typeof(a) t = a; a = b; b = t; }
+//#define swap(a, b) { typeof(a) t = a; a = b; b = t; }
+inline void swap(int16_t &a, int16_t &b) { int16_t t = a; a = b; b = t; }
 
 #ifndef _ADAFRUIT_GFX_VARIANT
 #define _ADAFRUIT_GFX_VARIANT
@@ -87,6 +99,33 @@ class Adafruit_GFX : public Print {
 	void plot4points(uint16_t cx, uint16_t cy, uint16_t x, uint16_t y, uint16_t color);
 	int i_sin(int x);
 	int i_cos(int x);
+};
+
+class Adafruit_GFX_Button {
+
+ public:
+	Adafruit_GFX_Button(void);
+	void initButton(Adafruit_GFX *gfx, int16_t x, int16_t y, 
+		      uint8_t w, uint8_t h, 
+		      uint16_t outline, uint16_t fill, uint16_t textcolor,
+		      char *label, uint8_t textsize);
+	void drawButton(boolean inverted = false);
+	boolean contains(int16_t x, int16_t y);
+
+	void press(boolean p);
+	boolean isPressed();
+	boolean justPressed();
+	boolean justReleased();
+
+ private:
+	Adafruit_GFX *_gfx;
+	int16_t _x, _y;
+	uint16_t _w, _h;
+	uint8_t _textsize;
+	uint16_t _outlinecolor, _fillcolor, _textcolor;
+	char _label[10];
+
+	boolean currstate, laststate;
 };
 
 #endif // _ADAFRUIT_GFX_H

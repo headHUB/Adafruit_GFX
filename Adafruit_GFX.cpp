@@ -452,8 +452,16 @@ void Adafruit_GFX::drawLine(int16_t x0, int16_t y0,int16_t x1, int16_t y1,uint16
 #else
 //for 8bit processors
   int16_t steep = abs(y1 - y0) > abs(x1 - x0);
-  if (steep) { swap(x0, y0); swap(x1, y1); }
-  if (x0 > x1) { swap(x0, x1); swap(y0, y1); }
+  if (steep) {
+    swap(x0, y0);
+    swap(x1, y1);
+  }
+
+  if (x0 > x1) {
+    swap(x0, x1);
+    swap(y0, y1);
+  }
+
   int16_t dx, dy;
   dx = x1 - x0;
   dy = abs(y1 - y0);
@@ -466,17 +474,25 @@ void Adafruit_GFX::drawLine(int16_t x0, int16_t y0,int16_t x1, int16_t y1,uint16
   } else {
     ystep = -1;
   }
+
+  int16_t seg=x0;
   for (; x0<=x1; x0++) {
-    if (steep) {
-      drawPixel(y0, x0, color);
-    } else {
-      drawPixel(x0, y0, color);
-    }
     err -= dy;
     if (err < 0) {
+      if (steep) {
+        drawFastVLine(y0, seg, (x0-seg)+1, color);
+      } else {
+        drawFastHLine(seg, y0, (x0-seg)+1, color);
+      }
       y0 += ystep;
       err += dx;
+      seg=x0+1;
     }
+  }
+  if (steep) {
+    drawFastVLine(y0, seg, (x0-seg), color);
+  } else {
+    drawFastHLine(seg, y0, (x0-seg), color);
   }
 #endif
 }
@@ -699,10 +715,11 @@ void Adafruit_GFX::drawChar(int16_t x, int16_t y, unsigned char c,uint16_t color
     c -= fontStart;
   }
 
-  uint8_t bitCount=0;
+  uint16_t bitCount=0;
+  uint16_t line = 0;
   int fontIndex = (c*(fontWidth*fontHeight)/8)+4;
   for (int8_t i=0; i<fontHeight; i++ ) {
-    uint8_t line;
+    //uint8_t line;
     for (int8_t j = 0; j<fontWidth; j++) {
       if (bitCount++%8 == 0) {
         line = pgm_read_byte(fontData+fontIndex++);
@@ -782,3 +799,72 @@ void Adafruit_GFX::invertDisplay(boolean i) {
   // Do nothing, must be subclassed if supported
 }
 
+
+/***************************************************************************/
+// code for the GFX button UI element
+
+Adafruit_GFX_Button::Adafruit_GFX_Button(void) {
+   _gfx = 0;
+}
+
+void Adafruit_GFX_Button::initButton(Adafruit_GFX *gfx,
+					  int16_t x, int16_t y, 
+					  uint8_t w, uint8_t h, 
+					  uint16_t outline, uint16_t fill, 
+					  uint16_t textcolor,
+					  char *label, uint8_t textsize)
+{
+	_x = x;
+	_y = y;
+	_w = w;
+	_h = h;
+	_outlinecolor = outline;
+	_fillcolor = fill;
+	_textcolor = textcolor;
+	_textsize = textsize;
+	_gfx = gfx;
+	strncpy(_label, label, 9);
+	_label[9] = 0;
+}
+
+ 
+
+void Adafruit_GFX_Button::drawButton(boolean inverted) 
+{
+	uint16_t fill, outline, text;
+
+	if (! inverted) {
+		fill = _fillcolor;
+		outline = _outlinecolor;
+		text = _textcolor;
+	} else {
+		fill =  _textcolor;
+		outline = _outlinecolor;
+		text = _fillcolor;
+	}
+
+	_gfx->fillRoundRect(_x - (_w/2), _y - (_h/2), _w, _h, min(_w,_h)/4, fill);
+	_gfx->drawRoundRect(_x - (_w/2), _y - (_h/2), _w, _h, min(_w,_h)/4, outline);
+   
+   
+	_gfx->setCursor(_x - strlen(_label)*3*_textsize, _y-4*_textsize);
+	_gfx->setTextColor(text);
+	_gfx->setTextSize(_textsize);
+	_gfx->print(_label);
+}
+
+boolean Adafruit_GFX_Button::contains(int16_t x, int16_t y) {
+	if ((x < (_x - _w/2)) || (x > (_x + _w/2))) return false;
+	if ((y < (_y - _h)) || (y > (_y + _h/2))) return false;
+	return true;
+}
+
+
+ void Adafruit_GFX_Button::press(boolean p) {
+	laststate = currstate;
+	currstate = p;
+ }
+ 
+ boolean Adafruit_GFX_Button::isPressed() { return currstate; }
+ boolean Adafruit_GFX_Button::justPressed() { return (currstate && !laststate); }
+ boolean Adafruit_GFX_Button::justReleased() { return (!currstate && laststate); }
