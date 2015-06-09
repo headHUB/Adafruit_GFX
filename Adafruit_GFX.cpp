@@ -35,12 +35,21 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef __AVR__
- #include <avr/pgmspace.h>
-#else
- #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
-#endif
+// #ifdef __AVR__
+ // #include <avr/pgmspace.h>
+// #else
+ // #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
+// #endif
 
+	#ifdef __AVR__
+		#include <avr/pgmspace.h>
+	#elif defined(__SAM3X8E__)
+		#include <include/pio.h>
+		#define PROGMEM
+		#define pgm_read_byte(addr) (*(const unsigned char *)(addr))
+		#define pgm_read_word(addr) (*(const unsigned short *)(addr))
+		typedef unsigned char prog_uchar;
+	#endif
   
 static const uint8_t isinTable8[] = { 
   0, 4, 9, 13, 18, 22, 27, 31, 35, 40, 44, 
