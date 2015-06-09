@@ -2,16 +2,16 @@ This is a variation of the Adafruit_GFX library. It has been modified to don't b
 and uses an experimental text method, faster and support multiple fonts!
  - Faster Circle rendering
  - Faster Font Rendering
- - Multiple font support
- - Expanded bitmap support
+ - Multiple Font support
+ - Expanded Bitmap support
  - Added ellipse rendering (with fast sin e cos tables)
- - Slight faster drawLine for 32bit processors (new)
- 
-I introduced a small error in drawCircle and his variants that I just fix, if you downloaded this library before, please use the current version!!!
+ - Slight faster drawLine 
+
+The compatibility with the original Adafruit library it's 100% so this one can be used without drawback.
  
 If uou are using a library that include this one you can get an error during compilation about glcdfont!!!
 Solution it's simple, if you want to use this library you just comment out the include of glcdfont in the library that uses
-this verion of Adafruit_GFX as:
+this version of Adafruit_GFX as:
 
 //#include "glcdfont.c" //comment out if you are using the custom version of Adafruit_GFX!!!!!!!!!
 You can also try to use this:
