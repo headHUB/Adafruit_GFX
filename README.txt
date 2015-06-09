@@ -8,6 +8,8 @@ and uses an experimental text method, faster and support multiple fonts!
  - Slight faster drawLine 
 
 The compatibility with the original Adafruit library it's 100% so this one can be used without drawback.
+The reason I have modified? Adafruit kindly provide this useful libraries to developers but the rarely update and even less fix errors! I currently use this one in many libraries so I try to maintain better I can to avoid multiple errors in different libraries.
+I always update when Adafruit add features so it's always sincronized with the latest adafruit_GFX and you'll never miss the original.
  
 If uou are using a library that include this one you can get an error during compilation about glcdfont!!!
 Solution it's simple, if you want to use this library you just comment out the include of glcdfont in the library that uses
