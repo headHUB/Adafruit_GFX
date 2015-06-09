@@ -669,8 +669,7 @@ void Adafruit_GFX::drawChar(int16_t x, int16_t y, unsigned char c,uint16_t color
     return;
   if (c < fontStart || c > fontStart+fontLength) {
     c = 0;
-  }
-  else {
+  } else {
     c -= fontStart;
   }
 
@@ -685,16 +684,24 @@ void Adafruit_GFX::drawChar(int16_t x, int16_t y, unsigned char c,uint16_t color
         line = pgm_read_byte(fontData+fontIndex++);
       }
       if (line & 0x80) {
-        if (size > 1) //big
-		  fillRect(x+(j*size), y+(i*size)-i, size, size, color);
-        else {  // default size
-          drawPixel(x+j, y+i, color);
+        if (size > 1) {//big
+			#if defined(__MK20DX128__) || defined(__MK20DX256__)
+				fillRect(x+(j*size), y+(i*size), size, size, color);
+			#else
+				fillRect(x+(j*size), y+(i*size-i), size, size, color);//temp workaround!
+			#endif
+	  } else {  // default size
+			drawPixel(x+j, y+i, color);
         } 
       } else if (bg != color) {
-        if (size > 1) // big
-		  fillRect(x+(j*size), y+(i*size)-i, size, size, bg);
-        else {  // def size
-          drawPixel(x+j, y+i, bg);
+        if (size > 1) {// big
+			#if defined(__MK20DX128__) || defined(__MK20DX256__)
+				fillRect(x+(j*size), y+(i*size), size, size, bg);
+			#else
+				fillRect(x+(j*size), y+(i*size-i), size, size, bg);//temp workaround!
+			#endif
+	  } else {  // def size
+			drawPixel(x+j, y+i, bg);
         }
       }
       line <<= 1;
