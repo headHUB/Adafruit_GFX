@@ -509,10 +509,45 @@ void Adafruit_GFX::fillRoundRect(int16_t x, int16_t y, int16_t w,int16_t h, int1
 }
 
 // Draw a triangle
-void Adafruit_GFX::drawTriangle(int16_t x0, int16_t y0,int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint16_t color) {
-  drawLine(x0, y0, x1, y1, color);
-  drawLine(x1, y1, x2, y2, color);
-  drawLine(x2, y2, x0, y0, color);
+void Adafruit_GFX::drawTriangle(int16_t x0, int16_t y0,int16_t x1, int16_t y1,int16_t x2, int16_t y2, uint16_t color) 
+{
+	drawLine(x0, y0, x1, y1, color);
+	drawLine(x1, y1, x2, y2, color);
+	drawLine(x2, y2, x0, y0, color);
+}
+
+void Adafruit_GFX::drawQuad(int16_t x0, int16_t y0,int16_t x1, int16_t y1,int16_t x2, int16_t y2,int16_t x3, int16_t y3, uint16_t color) 
+{
+	drawLine(x0, y0, x1, y1, color);
+	drawLine(x1, y1, x2, y2, color);
+	drawLine(x2, y2, x3, y3, color);
+	drawLine(x3, y3, x0, y0, color);
+}
+
+//from triangle to whatever...
+void Adafruit_GFX::drawPolygon(int16_t cx, int16_t cy, uint8_t sides, int16_t diameter, float rot, uint16_t color)
+{ 
+	sides = (sides > 2? sides : 3);
+	float dtr = (PI/180.0) + PI;
+	float rads = 360.0 / sides;//points spacd equally
+	uint8_t i;
+	for (i = 0; i < sides; i++) { 
+		drawLine(
+			cx + (sin((i*rads + rot) * dtr) * diameter),
+			cy + (cos((i*rads + rot) * dtr) * diameter),
+			cx + (sin(((i+1)*rads + rot) * dtr) * diameter),
+			cy + (cos(((i+1)*rads + rot) * dtr) * diameter),
+			color);
+	}
+}
+
+void Adafruit_GFX::fillPolygonHelper(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t x3, int16_t y3,uint16_t color)
+{      
+  float xx = abs(x3-x2);
+  float yy = abs(y3-y2)/xx;
+  for(float i = 0.0; i < xx; i+=0.5){
+   drawLine(x1,y1, x2 + (x2>x3 ? -i:i), y2 + ((yy*i) * (y2<y3 ? 1:-1)),color);
+  }
 }
 
 
