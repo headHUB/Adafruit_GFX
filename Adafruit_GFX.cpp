@@ -541,15 +541,6 @@ void Adafruit_GFX::drawPolygon(int16_t cx, int16_t cy, uint8_t sides, int16_t di
 	}
 }
 
-void Adafruit_GFX::fillPolygonHelper(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t x3, int16_t y3,uint16_t color)
-{      
-  float xx = abs(x3-x2);
-  float yy = abs(y3-y2)/xx;
-  for(float i = 0.0; i < xx; i+=0.5){
-   drawLine(x1,y1, x2 + (x2>x3 ? -i:i), y2 + ((yy*i) * (y2<y3 ? 1:-1)),color);
-  }
-}
-
 
 void Adafruit_GFX::fillTriangle ( int16_t x0, int16_t y0,
 				  int16_t x1, int16_t y1,
