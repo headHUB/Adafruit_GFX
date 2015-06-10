@@ -43,6 +43,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 	#ifdef __AVR__
 		#include <avr/pgmspace.h>
+	#elif defined(ESP8266)
+		//none
 	#elif defined(__SAM3X8E__)
 		#include <include/pio.h>
 		#define PROGMEM
@@ -518,10 +520,10 @@ void Adafruit_GFX::drawTriangle(int16_t x0, int16_t y0,int16_t x1, int16_t y1,in
 
 void Adafruit_GFX::drawQuad(int16_t x0, int16_t y0,int16_t x1, int16_t y1,int16_t x2, int16_t y2,int16_t x3, int16_t y3, uint16_t color) 
 {
-	drawLine(x0, y0, x1, y1, color);
-	drawLine(x1, y1, x2, y2, color);
-	drawLine(x2, y2, x3, y3, color);
-	drawLine(x3, y3, x0, y0, color);
+	drawLine(x0, y0, x1, y1, color);//low 1
+	drawLine(x1, y1, x2, y2, color);//high 1
+	drawLine(x2, y2, x3, y3, color);//high 2
+	drawLine(x3, y3, x0, y0, color);//low 2
 }
 
 //from triangle to whatever...
@@ -539,6 +541,12 @@ void Adafruit_GFX::drawPolygon(int16_t cx, int16_t cy, uint8_t sides, int16_t di
 			cy + (cos(((i+1)*rads + rot) * dtr) * diameter),
 			color);
 	}
+}
+
+void Adafruit_GFX::fillQuad ( int16_t x0, int16_t y0,int16_t x1, int16_t y1,int16_t x2, int16_t y2, int16_t x3, int16_t y3, uint16_t color) 
+{
+    fillTriangle(x0,y0,x1,y1,x2,y2,color);
+    fillTriangle(x0,y0,x2,y2,x3,y3,color);
 }
 
 
@@ -575,7 +583,8 @@ void Adafruit_GFX::fillTriangle ( int16_t x0, int16_t y0,
     dx02 = x2 - x0,
     dy02 = y2 - y0,
     dx12 = x2 - x1,
-    dy12 = y2 - y1,
+    dy12 = y2 - y1;
+  int32_t
     sa   = 0,
     sb   = 0;
 
