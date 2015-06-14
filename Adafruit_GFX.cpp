@@ -720,21 +720,13 @@ void Adafruit_GFX::drawChar(int16_t x, int16_t y, unsigned char c,uint16_t color
       }
       if (line & 0x80) {
         if (size > 1) {//big
-			#if defined(__MK20DX128__) || defined(__MK20DX256__)
-				fillRect(x+(j*size), y+(i*size), size, size, color);
-			#else
-				fillRect(x+(j*size), y+(i*size-i), size, size, color);//temp workaround!
-			#endif
+			fillRect(x+(j*size), y+(i*size), size, size, color);
 	  } else {  // default size
 			drawPixel(x+j, y+i, color);
         } 
       } else if (bg != color) {
         if (size > 1) {// big
-			#if defined(__MK20DX128__) || defined(__MK20DX256__)
-				fillRect(x+(j*size), y+(i*size), size, size, bg);
-			#else
-				fillRect(x+(j*size), y+(i*size-i), size, size, bg);//temp workaround!
-			#endif
+			fillRect(x+(j*size), y+(i*size), size, size, bg);
 	  } else {  // def size
 			drawPixel(x+j, y+i, bg);
         }
