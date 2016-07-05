@@ -169,7 +169,7 @@ void Adafruit_GFX::drawArc(int16_t x, int16_t y, int16_t r, int16_t rs, int16_t 
 
 void Adafruit_GFX::ellipse(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color)
 {
-  int16_t a = abs(x1 - x0), b = abs(y1 - y0), b1 = b & 1; /* values of diameter */
+  long a = abs(x1 - x0), b = abs(y1 - y0), b1 = b & 1; /* values of diameter */
   long dx = 4 * (1 - a) * b * b, dy = 4 * (b1 + 1) * a * a; /* error increment */
   long err = dx + dy + b1 * a * a, e2; /* error of 1.step */
 
